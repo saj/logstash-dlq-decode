@@ -1,0 +1,4 @@
+/logstash-dlq-decode
+
+# Sample logs for testing
+/*.log

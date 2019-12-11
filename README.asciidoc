@@ -1,0 +1,50 @@
+:dlq-upstream-url: https://web.archive.org/web/20191211155640/https://www.elastic.co/guide/en/logstash/current/dead-letter-queues.html
+:jq-url: https://stedolan.github.io/jq/
+
+
+= logstash-dlq-decode
+
+Read a binary logstash {dlq-upstream-url}[dead letter queue] (DLQ) segment from standard input, parse entries from the segment, then write each entry as a JSON marshalled object to standard output.  Input may be arbitrarily large.  Entries are output one object per line.
+
+This program acts as a simple command-line filter.  This program may be combined with other filters, like {jq-url}[`jq`], in order to more easily inspect the contents of a logstash DLQ.  See the example below.
+
+No compatibility or stability guarantees extend to the output schema of this program at this time.
+
+
+== Installation
+
+This program is implemented in pure Go.  There are no build or runtime dependencies on any Elastic software components.
+
+----
+go get -u github.com/saj/logstash-dlq-decode
+----
+
+
+== Example
+
+----
+% logstash-dlq-decode <78.log | head -n 2 | jq 'del(.event)'
+{
+  "timestamp": "2019-12-06T23:58:03.403Z",
+  "plugin_type": "nginx-access",
+  "plugin_id": "elasticsearch",
+  "reason": "Could not index event to Elasticsearch. status: 400, action: [\"index\", {:_id=>\"b01678a8-b208-4389-9849-12fb29b220e9\", :_index=>\"nginx-access-2019.12.06\", :_type=>\"nginx-access\", :routing=>nil}, #<LogStash::Event:0x2f237897>], response: {\"index\"=>{\"_index\"=>\"nginx-access-2019.12.06\", \"_type\"=>\"nginx-access\", \"_id\"=>\"b01678a8-b208-4389-9849-12fb29b220e9\", \"status\"=>400, \"error\"=>{\"type\"=>\"mapper_parsing_exception\", \"reason\"=>\"failed to parse field [nginx.access.geoip.postal_code] of type [date]\", \"caused_by\"=>{\"type\"=>\"illegal_argument_exception\", \"reason\"=>\"Invalid format: \\\"L5B\\\"\"}}}}"
+}
+{
+  "timestamp": "2019-12-06T23:58:03.408Z",
+  "plugin_type": "nginx-access",
+  "plugin_id": "elasticsearch",
+  "reason": "Could not index event to Elasticsearch. status: 400, action: [\"index\", {:_id=>\"4a38758e-6ca4-4a1a-9b57-8648f08fa541\", :_index=>\"nginx-access-2019.12.06\", :_type=>\"nginx-access\", :routing=>nil}, #<LogStash::Event:0x257a161b>], response: {\"index\"=>{\"_index\"=>\"nginx-access-2019.12.06\", \"_type\"=>\"nginx-access\", \"_id\"=>\"4a38758e-6ca4-4a1a-9b57-8648f08fa541\", \"status\"=>400, \"error\"=>{\"type\"=>\"mapper_parsing_exception\", \"reason\"=>\"failed to parse field [nginx.access.geoip.postal_code] of type [date]\", \"caused_by\"=>{\"type\"=>\"illegal_argument_exception\", \"reason\"=>\"Invalid format: \\\"T5H\\\"\"}}}}"
+}
+----
+
+(The `event` key was elided from the example above for the sake of brevity.)
+
+
+== References
+
+Upstream source:
+
+* https://github.com/elastic/logstash/blob/7f5aa186c1e395bfb8eda8b1c415502c9baa8cb5/logstash-core/src/main/java/org/logstash/common/io/RecordIOWriter.java[`RecordIOWriter.java`]
+* https://github.com/elastic/logstash/blob/7f5aa186c1e395bfb8eda8b1c415502c9baa8cb5/logstash-core/src/main/java/org/logstash/DLQEntry.java[`DLQEntry.java`]
+* https://github.com/elastic/logstash/blob/7f5aa186c1e395bfb8eda8b1c415502c9baa8cb5/logstash-core/src/main/java/org/logstash/Event.java[`Event.java`]
