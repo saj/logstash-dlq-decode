@@ -23,9 +23,13 @@ var (
 )
 
 func init() {
-	var m map[string]interface{}
+	// DecodeOptions is an embedded field; it is exported via BasicHandle.
+	// BasicHandle is marked as deprecated in the codec package documentation.
+	// Promoted fields cannot be used as field names in composite literals.
+	// This is an odd situation.  As a workaround, we make an assignment
+	// separately, here, using a field selector.
 	codecHandle.DecodeOptions = codec.DecodeOptions{
-		MapType: reflect.TypeOf(m),
+		MapType: reflect.TypeOf(map[string]interface{}{}),
 	}
 }
 
