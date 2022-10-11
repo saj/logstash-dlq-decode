@@ -1,5 +1,5 @@
 module github.com/saj/logstash-dlq-decode
 
-go 1.13
+go 1.19
 
-require github.com/ugorji/go/codec v1.1.7
+require github.com/ugorji/go/codec v1.2.7
