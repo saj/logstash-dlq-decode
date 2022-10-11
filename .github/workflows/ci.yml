@@ -1,0 +1,40 @@
+---
+
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Ensure gofmt
+        run: test -z "$(gofmt -s -d .)"
+
+      - name: Ensure go.mod is already tidied
+        run: go mod tidy && git diff --no-patch --exit-code
+
+      - name: Run unit tests
+        run: go test ./...
+
+      - name: Build with Goreleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --snapshot --skip-publish --rm-dist
