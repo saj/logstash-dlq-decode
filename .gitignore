@@ -2,3 +2,5 @@
 
 # Sample logs for testing
 /*.log
+
+dist/
