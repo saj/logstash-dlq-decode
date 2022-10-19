@@ -16,7 +16,7 @@ No compatibility or stability guarantees extend to the output schema of this pro
 This program is implemented in pure Go.  There are no build or runtime dependencies on any Elastic software components.
 
 ----
-go get -u github.com/saj/logstash-dlq-decode
+go install github.com/saj/logstash-dlq-decode@latest
 ----
 
 
